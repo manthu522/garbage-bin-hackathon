@@ -18,8 +18,8 @@ const handleApiLoaded = (_map: any, _maps: any) => {
 };
 const defaultProps = {
     center: {
-        lat: 14.189768939638858,
-        lng: 78.29096728682399,
+        lat: 12.99238,
+        lng: 77.72093,
     },
     zoom: 11,
 };
@@ -27,12 +27,37 @@ const defaultProps = {
 function MapPage({ }): JSX.Element {
     const [sensorData, setSensorData] = React.useState<ISensorData[] | []>([]);
     React.useEffect(() => {
-        fetch("http://localhost:8080/api/sky-monarchs/sensor-data").then(
-            (res: any) => setSensorData(res.data))
+        fetch("http://localhost:8080/api/sky-monarchs/sensor-data")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log('data', result)
+                    setSensorData(result.responseList)
+                    console.log('sensor data', sensorData)
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error)
+                }
+            )
         const clusterInterval = setInterval(() => {
-            fetch("http://localhost:8080/api/sky-monarchs/sensor-data").then(
-            (res: any) => setSensorData(res.data)
-        )
+            fetch("http://localhost:8080/api/sky-monarchs/sensor-data")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log('data', result)
+                    setSensorData(result.responseList)
+                    console.log('sensor data', sensorData)
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error)
+                }
+            )
         }, 60000)
         return () => {
             clearInterval(clusterInterval)
@@ -50,7 +75,7 @@ function MapPage({ }): JSX.Element {
                     yesIWantToUseGoogleMapApiInternals
                     onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
                 >
-                    {sensorData.map((obj: ISensorData) => {
+                    {sensorData?.map((obj: ISensorData) => {
                         return (
                             <Marker
                                 key={`${obj.assetId}_${obj.hubId}`}
