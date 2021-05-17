@@ -1,32 +1,17 @@
 import React from "react";
-import GoogleMapReact from "google-map-react"
+import GoogleMapReact from "google-map-react";
 import Marker from "./Marker/Marker";
-interface IProps {
-    text: string
-    lat: number
-    lng: number
+
+interface ISensorData {
+    hubId: string
+    assetId: string
+    assetName: string
+    latitude: number
+    longitude: number
+    thrashLevel: number
+    colorCode: string
+    percentage: string
 }
-// const Marker = ({ text }: IProps) => <div>{text}</div>;
-const data = [
-    {
-        "hubId": "HAU94730022",
-        "assetId": "",
-        "assetName": "OBR",
-        "latitude": 14.189768939638858,
-        "longitude": 78.29096728682399,
-        "trashLevel": 5,
-        "colorCode": "red"
-    },
-    {
-        "hubId": "HAU94730023",
-        "assetId": "",
-        "assetName": "binName2",
-        "latitude": 15.189768939638858,
-        "longitude": 78.29096728682399,
-        "trashLevel": 8,
-        "colorCode": "green"
-    }
-]
 
 const handleApiLoaded = (_map: any, _maps: any) => {
     // use map and maps objects
@@ -40,26 +25,44 @@ const defaultProps = {
 };
 
 function MapPage({ }): JSX.Element {
+    const [sensorData, setSensorData] = React.useState<ISensorData[] | []>([]);
+    React.useEffect(() => {
+        fetch("http://localhost:8080/api/sky-monarchs/sensor-data").then(
+            (res: any) => setSensorData(res.data))
+        const clusterInterval = setInterval(() => {
+            fetch("http://localhost:8080/api/sky-monarchs/sensor-data").then(
+            (res: any) => setSensorData(res.data)
+        )
+        }, 60000)
+        return () => {
+            clearInterval(clusterInterval)
+        }
+    }, [])
 
     return (
         // Important! Always set the container height explicitly
         <div style={{ height: "100vh", width: "100%" }}>
-            {<GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyDwUoDNf4KP2QP3zxsMa7R295vbgBuUvxg" }}
-                defaultCenter={defaultProps.center}
-                defaultZoom={defaultProps.zoom}
-                yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-            >
-                {
-                    data.map(obj => {
-                        return <Marker key={`${obj.assetId}_${obj.hubId}`} onClick={() => console.log('clicked ')} lat={obj.latitude}
-                            lng={obj.longitude}
-                            color={obj.colorCode}
-                            name={obj.assetName} />
-                    })
-                }
-            </GoogleMapReact> }
+            {
+                <GoogleMapReact
+                    bootstrapURLKeys={{ key: "AIzaSyDwUoDNf4KP2QP3zxsMa7R295vbgBuUvxg" }}
+                    defaultCenter={defaultProps.center}
+                    defaultZoom={defaultProps.zoom}
+                    yesIWantToUseGoogleMapApiInternals
+                    onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+                >
+                    {sensorData.map((obj: ISensorData) => {
+                        return (
+                            <Marker
+                                key={`${obj.assetId}_${obj.hubId}`}
+                                onClick={() => console.log("clicked ")}
+                                lat={obj.latitude}
+                                lng={obj.longitude}
+                                {...obj}
+                            />
+                        );
+                    })}
+                </GoogleMapReact>
+            }
         </div>
     );
 }

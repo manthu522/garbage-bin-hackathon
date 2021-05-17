@@ -2,13 +2,13 @@ import React from 'react';
 import './Marker.css';
 
 const Marker = (props: any) => {
-    const { color, name, id, onClick } = props;
+    const { colorCode, assetName, onClick, trashLevel } = props;
     return (
         <div>
-            <div style={{ paddingBottom: 10, height: 45 }}>
+            <div onClick={onClick} style={{ paddingBottom: 10, height: 45 }}>
                 <span
                     style={{
-                        backgroundColor: color,
+                        backgroundColor: colorCode,
                         border: `1px solid black`,
                         borderRadius: "4px",
                         color: 'black',
@@ -22,8 +22,8 @@ const Marker = (props: any) => {
                         zIndex: 1000
                     }}
                 >
-                    <span> {name} </span>
-                    <span className="bold" style={{ marginLeft: 2 }}> 35% </span>
+                    <span> {assetName} </span>
+                    <span className="bold" style={{ marginLeft: 2 }}> {trashLevel} </span>
                     <span
                         style={{
                             borderLeft: "10px solid transparent",

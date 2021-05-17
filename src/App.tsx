@@ -5,7 +5,7 @@ import { MapPage } from "./Map";
 function App() {
   return (
     <div className="App">
-      <header className="App-header">Welcome to Garbage Bin POC</header>
+      <header className="App-header">Smart Garbage Level Monitoring</header>
       <MapPage />
     </div>
   );
