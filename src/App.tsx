@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">Welcome to Garbage Bin POC</header>
-      <MapPage></MapPage>
+      <MapPage />
     </div>
   );
 }
