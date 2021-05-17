@@ -1,16 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import GoogleMapReact from "google-map-react";
 import Marker from "./Marker/Marker";
 
 interface ISensorData {
-    hubId: string
-    assetId: string
-    assetName: string
-    latitude: number
-    longitude: number
-    thrashLevel: number
-    colorCode: string
-    percentage: string
+    hubId: string;
+    assetId: string;
+    assetName: string;
+    latitude: number;
+    longitude: number;
+    thrashLevel: number;
+    colorCode: string;
+    percentage: string;
+    totalCapacity: string;
 }
 
 const handleApiLoaded = (_map: any, _maps: any) => {
@@ -25,44 +27,45 @@ const defaultProps = {
 };
 
 function MapPage({ }): JSX.Element {
-    const [sensorData, setSensorData] = React.useState<ISensorData[] | []>([]);
-    React.useEffect(() => {
-        fetch("http://localhost:8080/api/sky-monarchs/sensor-data")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log('data', result)
-                    setSensorData(result.responseList)
-                    console.log('sensor data', sensorData)
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    console.log(error)
-                }
-            )
-        const clusterInterval = setInterval(() => {
-            fetch("http://localhost:8080/api/sky-monarchs/sensor-data")
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    console.log('data', result)
-                    setSensorData(result.responseList)
-                    console.log('sensor data', sensorData)
-                },
-                // Note: it's important to handle errors here
-                // instead of a catch() block so that we don't swallow
-                // exceptions from actual bugs in components.
-                (error) => {
-                    console.log(error)
-                }
-            )
-        }, 60000)
-        return () => {
-            clearInterval(clusterInterval)
+    const data: ISensorData[] =  [
+        {
+            "hubId": '1234567',
+            "assetId": "123454233",
+            "assetName": "Bin2",
+            "latitude": 13.175322532737907,
+            "longitude": 77.57725743535107,
+            "thrashLevel": 109,
+            "colorCode": "#33FF52",
+            "percentage": "0.2",
+            "totalCapacity": "110"
         }
-    }, [])
+    ]
+    const [sensorData, setSensorData] = React.useState<ISensorData[] | []>(data);
+
+    const makeAPICall = () => {
+        fetch("http://localhost:8080/api/sky-monarchs/sensor-data")
+            .then((res) => res.json())
+            .then(
+                (result) => {
+                    setSensorData({sensorData, ...result.responseList});
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    console.log(error);
+                }
+            );
+    };
+    React.useEffect(() => {
+        makeAPICall();
+        const clusterInterval = setInterval(() => {
+            makeAPICall();
+        }, 60000);
+        return () => {
+            clearInterval(clusterInterval);
+        };
+    }, []);
 
     return (
         // Important! Always set the container height explicitly
