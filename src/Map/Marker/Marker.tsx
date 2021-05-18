@@ -25,7 +25,7 @@ const Marker = (props: any) => {
                     <div style={{display: 'flex'}}>
                         <div>{`Name: ${assetName} | `}</div>
                         <div style={{marginLeft: '8px'}}>{ `Capacity: ${totalCapacity}cm | `}</div>
-                        <div style={{marginLeft: '8px'}}>{ `Filled: ${Number(percentage) * 100}%`}</div>
+                        <div style={{marginLeft: '8px'}}>{ `Filled: ${(Number(percentage) * 100).toFixed(0)}%`}</div>
                     </div>
                     <span
                         style={{

@@ -47,7 +47,7 @@ function MapPage({ }): JSX.Element {
             .then((res) => res.json())
             .then(
                 (result) => {
-                    setSensorData({sensorData, ...result.responseList});
+                    setSensorData([...sensorData, ...result.responseList]);
                 },
                 // Note: it's important to handle errors here
                 // instead of a catch() block so that we don't swallow
@@ -61,7 +61,7 @@ function MapPage({ }): JSX.Element {
         makeAPICall();
         const clusterInterval = setInterval(() => {
             makeAPICall();
-        }, 60000);
+        }, 30000);
         return () => {
             clearInterval(clusterInterval);
         };
